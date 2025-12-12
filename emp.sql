@@ -1435,3 +1435,180 @@ SELECT emp_name FROM employee
 SELECT  COUNT(*) AS Total_employees 
  FROM employee 
  WHERE YEAR(emp_dateofjoining) = '2025';
+
+	##SubQuery
+	
+#Q1. List employees whose salary is greater than the average employee salary.
+select emp_name
+from employee
+WHERE emp_sal > (select AVG(emp_sal) FROM employee);
+
+#Q2. Display the employee whose salary is equal to the maximum salary in the company.
+select emp_name
+from employee
+where emp_sal = (select MAX(emp_sal) FROM employee);
+
+#Q3. List employees who belong to the same city as the highest paid employee.
+select emp_name, emp_city
+from employee
+where emp_city = (
+    select emp_city
+    from employee
+    order by emp_sal desc
+    limit 1
+);
+
+#Q4. List employees hired after the employee with the highest salary was hired.
+select emp_name, emp_dateofjoining
+from employee
+where emp_dateofjoining > (
+    select emp_dateofjoining
+    from employee
+    order by emp_sal desc
+    limit 1
+);
+
+#Q5. Display employees whose department is same as the employee with employee_id = 101.
+SELECT emp_name
+FROM employee
+WHERE dept_id = (SELECT dept_id FROM employee WHERE emp_id = 1);
+
+select *from dept;
+#Q6. Show employees whose city is same as the employee with maximum salary.
+select emp_name, emp_city, emp_sal
+from employee
+where emp_city = (
+    select emp_city
+    from employee
+    order by emp_sal desc
+    limit 1
+);
+
+#Q7. Retrieve employees whose salary is greater than the salary of employee_id = 105.
+SELECT emp_name
+FROM employee
+WHERE emp_sal > (SELECT emp_sal FROM employee WHERE emp_id = 5);
+
+select *from employee;
+
+#Q8. List employees working in the same department as employee Aarav.
+SELECT emp_name
+FROM employee
+WHERE dept_id = (SELECT dept_id FROM employee WHERE emp_name = 'Aarav');
+
+#Q9. Find employees whose performance matches the performance of the employee with maximum salary.
+select emp_name, emp_desg, emp_performance
+from employee
+where emp_performance = (
+    select emp_performance
+    from employee
+    order by emp_sal desc
+    limit 1
+);
+
+#Q10. List employees whose designation is the same as the employee who joined first.
+select emp_name, emp_desg, emp_dateofjoining
+from employee
+where emp_desg = (
+    select emp_desg
+    from employee
+    order by emp_dateofjoining asc
+    limit 1
+);
+
+#Q11. List employees who belong to departments that have more than one employee.
+select emp_name, emp_dept
+from employee
+where emp_dept in (
+    select emp_dept
+    from employee
+    group by emp_dept
+    having count(*) > 1
+);
+
+#Q12. Find employees whose salary is lower than the salaries of all employees in department_id = 3.
+select emp_name, emp_dept, emp_sal
+from employee
+where emp_sal < all (
+    select emp_sal
+    from employee
+    where emp_dept = 3
+);
+
+#Q13. Display employees whose department exists in the employees table.
+select emp_name, emp_dept
+from employee
+where emp_dept in (select distinct emp_dept from employee);
+
+#Q14. List employees who have the same activity status as multiple other employees.
+select emp_name, project_id, emp_dateofjoining
+from employee
+where project_id in (
+    select project_id
+    from employee
+    group by project_id
+    having count(*) > 1
+);
+
+#Q15. Display employees who joined on the same date as any other employees.
+select emp_name, emp_dateofjoining, emp_sal
+from employee
+where emp_dateofjoining in (
+    select emp_dateofjoining
+    from employee
+    group by emp_dateofjoining
+    having count(*) > 1
+);
+
+#Q16. Retrieve employees whose salary is higher than salaries of employees in Pune.
+select emp_name, emp_sal, emp_city
+from employee
+where emp_sal > all (
+    select emp_sal
+    from employee
+    where emp_city = 'pune'
+);
+
+
+#Q17. List employees belonging to departments containing more than 5 employees.
+select emp_name, emp_dept
+from employee
+where emp_dept in (
+    select emp_dept
+    from employee
+    group by emp_dept
+    having count(*) > 5
+);
+
+#Q18. Display employees whose designation exists in more than one department.
+select emp_name, emp_desg, emp_dept
+from employee
+where emp_desg in (
+    select emp_desg
+    from employee
+    group by emp_desg, emp_dept
+    having count(distinct emp_dept) > 1
+);
+
+
+#Q19. Show employees whose project_id is same as project_ids that have multiple employees working on them.
+select emp_name, project_id
+from employee
+where project_id in (
+    select project_id
+    from employee
+    group by project_id
+    having count(*) > 1
+);
+
+#Q20. List employees whose performance rating is the same as other employees with emp_sal greater than 50000.
+select *from employee
+where emp_performance in (
+    select emp_performance
+    from employee
+    where emp_sal > 50000
+) 
+and emp_sal <= 50000;
+
+
+	
